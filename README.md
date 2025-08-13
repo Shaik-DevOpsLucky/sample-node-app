@@ -154,3 +154,118 @@ sudo usermod -aG docker $USER
 
 Log out and log back in.
 
+Create `Dockerfile`:
+
+```dockerfile
+FROM node:16
+WORKDIR /usr/src/app
+COPY package*.json ./
+RUN npm install
+COPY . .
+EXPOSE 3000
+CMD ["node", "app.js"]
+```
+
+Build and run:
+
+```bash
+docker build -t sample-app .
+docker run -p 3000:3000 sample-app
+```
+
+---
+
+## 🧹 Cleanup Instructions
+
+### 1. Remove Node.js and npm
+
+```bash
+sudo apt remove --purge nodejs
+sudo apt autoremove --purge
+sudo apt clean
+rm -rf /path/to/sample-app/node_modules
+npm cache clean --force
+```
+
+---
+
+### 2. Remove Docker Resources
+
+```bash
+# Stop and remove containers
+docker ps
+docker stop <container_id>
+docker rm <container_id>
+
+# Remove images
+docker images
+docker rmi <image_id>
+
+# Remove unused volumes and networks
+docker volume prune
+docker network prune
+docker image prune
+docker system prune -a
+```
+
+---
+
+### 3. Remove Nginx
+
+```bash
+sudo systemctl stop nginx
+sudo apt remove --purge nginx
+sudo apt autoremove --purge
+sudo apt clean
+sudo rm -rf /etc/nginx
+```
+
+---
+
+### 4. Remove the App Directory
+
+```bash
+cd ~
+rm -rf sample-app
+```
+
+---
+
+### 5. General Cleanup
+
+```bash
+sudo apt autoremove
+sudo apt remove --purge
+sudo apt clean
+```
+
+---
+
+### 6. Remove Docker Group Access
+
+```bash
+sudo gpasswd -d $USER docker
+sudo reboot
+```
+
+---
+
+### 7. Kill Remaining Node.js Processes
+
+```bash
+ps aux | grep node
+kill <PID>
+```
+
+---
+
+### 8. Search and Remove Leftover `node_modules`
+
+```bash
+find / -name "node_modules"
+rm -rf /path/to/node_modules
+```
+
+---
+
+✅ Following these steps will let you **host** a Node.js app on Ubuntu and **fully clean up** the environment when done.
